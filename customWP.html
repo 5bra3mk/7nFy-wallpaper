@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic YouTube Video Wallpaper</title>
-    <!-- Google Fonts Import -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Orbitron:wght@400;700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
     <style>
         * {
@@ -17,10 +16,11 @@
             height: 100vh;
             width: 100vw;
             overflow: hidden;
-            background-color: #000; /* Fallback background */
+            background-color: #000;
+            font-family: 'Roboto', sans-serif;
+            color: white;
         }
         
-        /* Video container */
         #video-container {
             position: absolute;
             top: 0;
@@ -42,26 +42,99 @@
             height: auto;
         }
         
-        /* Clock container */
         #clock-container {
             position: absolute;
             padding: 20px;
             text-align: center;
             z-index: 10;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
         }
         
-        /* Time styling */
         #time {
             font-weight: 700;
             line-height: 1;
             transition: all 0.3s ease;
         }
         
-        /* Date styling */
         #date {
             font-weight: 300;
             transition: all 0.3s ease;
+        }
+        
+        .config-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            width: 300px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .config-panel h3 {
+            margin-bottom: 15px;
+            color: #4CAF50;
+            text-align: center;
+        }
+        
+        .config-group {
+            margin-bottom: 12px;
+        }
+        
+        .config-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .config-group input, .config-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #333;
+            color: white;
+        }
+        
+        .config-group input[type="color"] {
+            height: 40px;
+            padding: 2px;
+        }
+        
+        .toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 50;
+            font-size: 14px;
+        }
+        
+        .toggle-btn:hover {
+            background: rgba(50, 50, 50, 0.8);
+        }
+        
+        .save-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .save-btn:hover {
+            background: #45a049;
         }
     </style>
 </head>
@@ -76,42 +149,128 @@
         <div id="time">00:00:00</div>
         <div id="date">Monday, January 1, 2023</div>
     </div>
+    
+    <!-- Configuration Toggle -->
+    <button class="toggle-btn">⚙️ Settings</button>
+    
+    <!-- Configuration Panel -->
+    <div class="config-panel">
+        <h3>Wallpaper Configuration</h3>
+        
+        <div class="config-group">
+            <label for="youtube-id">YouTube Video ID:</label>
+            <input type="text" id="youtube-id" placeholder="Enter YouTube video ID">
+        </div>
+        
+        <div class="config-group">
+            <label for="clock-position">Clock Position:</label>
+            <select id="clock-position">
+                <option value="top-left">Top Left</option>
+                <option value="top-right">Top Right</option>
+                <option value="center" selected>Center</option>
+                <option value="bottom-left">Bottom Left</option>
+                <option value="bottom-right">Bottom Right</option>
+            </select>
+        </div>
+        
+        <div class="config-group">
+            <label for="font-family">Font Family:</label>
+            <select id="font-family">
+                <option value="'Roboto', sans-serif">Roboto</option>
+                <option value="'Orbitron', sans-serif">Orbitron</option>
+                <option value="'Montserrat', sans-serif">Montserrat</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Courier New', monospace">Courier New</option>
+            </select>
+        </div>
+        
+        <div class="config-group">
+            <label for="time-font-size">Time Font Size (vw):</label>
+            <input type="range" id="time-font-size" min="1" max="15" step="0.5" value="6">
+            <span id="time-size-value">6vw</span>
+        </div>
+        
+        <div class="config-group">
+            <label for="date-font-size">Date Font Size (vw):</label>
+            <input type="range" id="date-font-size" min="1" max="8" step="0.5" value="2.5">
+            <span id="date-size-value">2.5vw</span>
+        </div>
+        
+        <div class="config-group">
+            <label for="time-color">Time Color:</label>
+            <input type="color" id="time-color" value="#ffffff">
+        </div>
+        
+        <div class="config-group">
+            <label for="date-color">Date Color:</label>
+            <input type="color" id="date-color" value="#ffffff">
+        </div>
+        
+        <div class="config-group">
+            <label for="glow-color">Glow Color:</label>
+            <input type="color" id="glow-color" value="#ffffff">
+        </div>
+        
+        <div class="config-group">
+            <label for="glow-blur">Glow Intensity:</label>
+            <input type="range" id="glow-blur" min="0" max="15" step="0.5" value="8">
+            <span id="glow-blur-value">8px</span>
+        </div>
+        
+        <button class="save-btn" id="save-settings">Apply Settings</button>
+    </div>
 
     <script>
         // ==============================
-        // USER CONFIGURATION SETTINGS
+        // DEFAULT CONFIGURATION SETTINGS
         // ==============================
-        const settings = {
-            // YouTube video settings
+        const defaultSettings = {
             youtubeVideoId: "dQw4w9WgXcQ", // Default: Rick Astley - Never Gonna Give You Up
-            
-            // Clock position (choose one from: top-left, top-right, center, bottom-left, bottom-right)
             clockPosition: "center",
-            
-            // Font settings
-            fontFamily: "Roboto, sans-serif", // Use any Google Font or system font
-            timeFontSize: "6vw", // Responsive sizing
-            dateFontSize: "2.5vw", // Responsive sizing
+            fontFamily: "'Roboto', sans-serif",
+            timeFontSize: "6vw",
+            dateFontSize: "2.5vw",
             timeColor: "#ffffff",
             dateColor: "#ffffff",
-            
-            // Glow effect settings
-            glowColor: "rgba(255, 255, 255, 0.7)",
+            glowColor: "#ffffff",
             glowBlur: "8px",
-            
-            // Background fallback
             fallbackBackground: "#000000"
         };
-        // ==============================
-        // END OF USER CONFIGURATION
-        // ==============================
-
-        // Apply settings to the clock
-        function applyClockSettings() {
-            const clockContainer = document.getElementById('clock-container');
-            const timeElement = document.getElementById('time');
-            const dateElement = document.getElementById('date');
-            
+        
+        // Current settings (start with defaults)
+        let settings = {...defaultSettings};
+        
+        // DOM Elements
+        const clockContainer = document.getElementById('clock-container');
+        const timeElement = document.getElementById('time');
+        const dateElement = document.getElementById('date');
+        const videoBackground = document.getElementById('video-background');
+        const configPanel = document.querySelector('.config-panel');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const saveBtn = document.getElementById('save-settings');
+        
+        // Load saved settings from localStorage
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('wallpaperSettings');
+            if (savedSettings) {
+                try {
+                    settings = {...defaultSettings, ...JSON.parse(savedSettings)};
+                } catch (e) {
+                    console.error('Error loading settings:', e);
+                    settings = {...defaultSettings};
+                }
+            }
+            applySettings();
+        }
+        
+        // Save settings to localStorage
+        function saveSettings() {
+            localStorage.setItem('wallpaperSettings', JSON.stringify(settings));
+            applySettings();
+        }
+        
+        // Apply current settings to the wallpaper
+        function applySettings() {
             // Apply font family
             document.body.style.fontFamily = settings.fontFamily;
             
@@ -130,21 +289,29 @@
                 case 'top-left':
                     clockContainer.style.top = '20px';
                     clockContainer.style.left = '20px';
+                    clockContainer.style.right = 'auto';
+                    clockContainer.style.bottom = 'auto';
                     clockContainer.style.transform = 'none';
                     break;
                 case 'top-right':
                     clockContainer.style.top = '20px';
                     clockContainer.style.right = '20px';
+                    clockContainer.style.left = 'auto';
+                    clockContainer.style.bottom = 'auto';
                     clockContainer.style.transform = 'none';
                     break;
                 case 'bottom-left':
                     clockContainer.style.bottom = '20px';
                     clockContainer.style.left = '20px';
+                    clockContainer.style.top = 'auto';
+                    clockContainer.style.right = 'auto';
                     clockContainer.style.transform = 'none';
                     break;
                 case 'bottom-right':
                     clockContainer.style.bottom = '20px';
                     clockContainer.style.right = '20px';
+                    clockContainer.style.top = 'auto';
+                    clockContainer.style.left = 'auto';
                     clockContainer.style.transform = 'none';
                     break;
                 case 'center':
@@ -154,15 +321,17 @@
                     clockContainer.style.transform = 'translate(-50%, -50%)';
                     break;
             }
+            
+            // Load YouTube video
+            loadYouTubeVideo();
         }
         
-        // Load YouTube video
+        // Load YouTube video with current settings
         function loadYouTubeVideo() {
-            const video = document.getElementById('video-background');
-            video.src = `https://www.youtube.com/embed/${settings.youtubeVideoId}?autoplay=1&controls=0&loop=1&mute=1&playlist=${settings.youtubeVideoId}&modestbranding=1&rel=0`;
+            videoBackground.src = `https://www.youtube.com/embed/${settings.youtubeVideoId}?autoplay=1&controls=0&loop=1&mute=1&playlist=${settings.youtubeVideoId}&modestbranding=1&rel=0`;
             
             // Fallback in case video fails to load
-            video.onerror = () => {
+            videoBackground.onerror = () => {
                 document.body.style.backgroundColor = settings.fallbackBackground;
                 document.getElementById('video-container').style.display = 'none';
             };
@@ -171,8 +340,6 @@
         // Update time and date
         function updateClock() {
             const now = new Date();
-            const timeElement = document.getElementById('time');
-            const dateElement = document.getElementById('date');
             
             // Format time
             const hours = String(now.getHours()).padStart(2, '0');
@@ -185,14 +352,97 @@
             dateElement.textContent = now.toLocaleDateString('en-US', options);
         }
         
+        // Initialize configuration panel
+        function initConfigPanel() {
+            // Set current values in form
+            document.getElementById('youtube-id').value = settings.youtubeVideoId;
+            document.getElementById('clock-position').value = settings.clockPosition;
+            document.getElementById('font-family').value = settings.fontFamily;
+            document.getElementById('time-font-size').value = parseFloat(settings.timeFontSize);
+            document.getElementById('date-font-size').value = parseFloat(settings.dateFontSize);
+            document.getElementById('time-color').value = settings.timeColor;
+            document.getElementById('date-color').value = settings.dateColor;
+            document.getElementById('glow-color').value = settings.glowColor;
+            document.getElementById('glow-blur').value = parseFloat(settings.glowBlur);
+            
+            // Update value displays
+            document.getElementById('time-size-value').textContent = settings.timeFontSize;
+            document.getElementById('date-size-value').textContent = settings.dateFontSize;
+            document.getElementById('glow-blur-value').textContent = settings.glowBlur;
+            
+            // Event listeners for real-time preview
+            document.getElementById('time-font-size').addEventListener('input', function() {
+                const value = this.value;
+                document.getElementById('time-size-value').textContent = value + 'vw';
+                timeElement.style.fontSize = value + 'vw';
+            });
+            
+            document.getElementById('date-font-size').addEventListener('input', function() {
+                const value = this.value;
+                document.getElementById('date-size-value').textContent = value + 'vw';
+                dateElement.style.fontSize = value + 'vw';
+            });
+            
+            document.getElementById('time-color').addEventListener('input', function() {
+                timeElement.style.color = this.value;
+            });
+            
+            document.getElementById('date-color').addEventListener('input', function() {
+                dateElement.style.color = this.value;
+            });
+            
+            document.getElementById('glow-color').addEventListener('input', function() {
+                const blur = document.getElementById('glow-blur').value;
+                timeElement.style.textShadow = `0 0 ${blur}px ${this.value}`;
+                dateElement.style.textShadow = `0 0 ${blur}px ${this.value}`;
+            });
+            
+            document.getElementById('glow-blur').addEventListener('input', function() {
+                const color = document.getElementById('glow-color').value;
+                document.getElementById('glow-blur-value').textContent = this.value + 'px';
+                timeElement.style.textShadow = `0 0 ${this.value}px ${color}`;
+                dateElement.style.textShadow = `0 0 ${this.value}px ${color}`;
+            });
+            
+            document.getElementById('font-family').addEventListener('change', function() {
+                document.body.style.fontFamily = this.value;
+            });
+            
+            // Toggle config panel
+            toggleBtn.addEventListener('click', () => {
+                configPanel.style.display = configPanel.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            // Save settings
+            saveBtn.addEventListener('click', () => {
+                settings = {
+                    youtubeVideoId: document.getElementById('youtube-id').value,
+                    clockPosition: document.getElementById('clock-position').value,
+                    fontFamily: document.getElementById('font-family').value,
+                    timeFontSize: document.getElementById('time-font-size').value + 'vw',
+                    dateFontSize: document.getElementById('date-font-size').value + 'vw',
+                    timeColor: document.getElementById('time-color').value,
+                    dateColor: document.getElementById('date-color').value,
+                    glowColor: document.getElementById('glow-color').value,
+                    glowBlur: document.getElementById('glow-blur').value + 'px',
+                    fallbackBackground: defaultSettings.fallbackBackground
+                };
+                
+                saveSettings();
+                configPanel.style.display = 'none';
+            });
+        }
+        
         // Initialize the wallpaper
         function initWallpaper() {
-            applyClockSettings();
-            loadYouTubeVideo();
+            loadSettings();
             updateClock();
             
             // Update the clock every second
             setInterval(updateClock, 1000);
+            
+            // Initialize configuration panel
+            initConfigPanel();
         }
         
         // Start when the page loads
