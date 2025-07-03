@@ -1,295 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Customizable Lively Wallpaper</title>
-
-<link id="dynamic-font" href="https://fonts.googleapis.com/css2?family=Knewave&display=swap" rel="stylesheet" />
-
-<style>
-  * {
-    margin: 0; padding: 0; box-sizing: border-box;
-  }
-  html, body {
-    height: 100%;
-    overflow: hidden;
-    font-family: 'Knewave', cursive;
-    background: black;
-    color: #fff;
-  }
-  #video-background {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: -1;
-    filter: brightness(0.5);
-  }
-  #video-background iframe {
-    width: 100%;
-    height: 100%;
-  }
-  #clock-container {
-    position: fixed;
-    width: 100%;
-    text-align: center;
-    user-select: none;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  #clock {
-    font-size: 96px;
-    color: #fff;
-    text-shadow:
-      0 0 5px #fff,
-      0 0 10px #ff0055;
-  }
-  #date {
-    font-size: 32px;
-    margin-top: 4px;
-    color: #fff;
-    text-shadow:
-      0 0 4px #fff,
-      0 0 8px #ff0055;
-  }
-  /* Sidebar settings panel */
-  #settings-panel {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 280px;
-    background: rgba(0,0,0,0.75);
-    border-radius: 10px;
-    padding: 15px;
-    font-family: Arial, sans-serif;
-    color: #eee;
-    z-index: 10;
-    user-select: text;
-  }
-  #settings-panel h2 {
-    margin-bottom: 12px;
-    font-size: 18px;
-    text-align: center;
-  }
-  #settings-panel label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-  }
-  #settings-panel input[type="text"],
-  #settings-panel select {
-    width: 100%;
-    padding: 6px 8px;
-    margin-top: 4px;
-    border-radius: 4px;
-    border: none;
-    font-size: 14px;
-  }
-  #settings-panel input[type="color"] {
-    margin-top: 4px;
-    width: 50px;
-    height: 28px;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic YouTube Video Wallpaper</title>
+    <!-- Google Fonts Import -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Orbitron:wght@400;700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: #000; /* Fallback background */
+        }
+        
+        /* Video container */
+        #video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        #video-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+        }
+        
+        /* Clock container */
+        #clock-container {
+            position: absolute;
+            padding: 20px;
+            text-align: center;
+            z-index: 10;
+            transition: transform 0.3s ease;
+        }
+        
+        /* Time styling */
+        #time {
+            font-weight: 700;
+            line-height: 1;
+            transition: all 0.3s ease;
+        }
+        
+        /* Date styling */
+        #date {
+            font-weight: 300;
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
 <body>
+    <!-- Video Background -->
+    <div id="video-container">
+        <iframe id="video-background" frameborder="0" allowfullscreen></iframe>
+    </div>
+    
+    <!-- Clock Container -->
+    <div id="clock-container">
+        <div id="time">00:00:00</div>
+        <div id="date">Monday, January 1, 2023</div>
+    </div>
 
-<div id="video-background">
-  <iframe id="yt-video" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-</div>
+    <script>
+        // ==============================
+        // USER CONFIGURATION SETTINGS
+        // ==============================
+        const settings = {
+            // YouTube video settings
+            youtubeVideoId: "dQw4w9WgXcQ", // Default: Rick Astley - Never Gonna Give You Up
+            
+            // Clock position (choose one from: top-left, top-right, center, bottom-left, bottom-right)
+            clockPosition: "center",
+            
+            // Font settings
+            fontFamily: "Roboto, sans-serif", // Use any Google Font or system font
+            timeFontSize: "6vw", // Responsive sizing
+            dateFontSize: "2.5vw", // Responsive sizing
+            timeColor: "#ffffff",
+            dateColor: "#ffffff",
+            
+            // Glow effect settings
+            glowColor: "rgba(255, 255, 255, 0.7)",
+            glowBlur: "8px",
+            
+            // Background fallback
+            fallbackBackground: "#000000"
+        };
+        // ==============================
+        // END OF USER CONFIGURATION
+        // ==============================
 
-<div id="clock-container">
-  <div id="clock">00:00</div>
-  <div id="date">Thursday 1 January</div>
-</div>
-
-<div id="settings-panel">
-  <h2>Settings</h2>
-  
-  <label for="videoId">YouTube Video ID:</label>
-  <input type="text" id="videoId" placeholder="e.g. gU4vSEZwiyE" />
-
-  <label for="fontSizeClock">Clock Font Size (px):</label>
-  <input type="text" id="fontSizeClock" placeholder="e.g. 96" />
-
-  <label for="fontSizeDate">Date Font Size (px):</label>
-  <input type="text" id="fontSizeDate" placeholder="e.g. 32" />
-
-  <label for="textColor">Text Color:</label>
-  <input type="color" id="textColor" value="#ffffff" />
-
-  <label for="positionSelect">Clock Position:</label>
-  <select id="positionSelect">
-    <option value="top-center">Top Center</option>
-    <option value="top-left">Top Left</option>
-    <option value="top-right">Top Right</option>
-    <option value="bottom-center">Bottom Center</option>
-    <option value="bottom-left">Bottom Left</option>
-    <option value="bottom-right">Bottom Right</option>
-    <option value="center">Center</option>
-  </select>
-</div>
-
-<script>
-  // Default settings
-  const settings = {
-    youtubeVideoId: "gU4vSEZwiyE",
-    fontSizeClock: 96,
-    fontSizeDate: 32,
-    textColor: "#ffffff",
-    clockPosition: "top-center"
-  };
-
-  // Elements
-  const ytVideo = document.getElementById("yt-video");
-  const clock = document.getElementById("clock");
-  const date = document.getElementById("date");
-  const clockContainer = document.getElementById("clock-container");
-
-  // Update YouTube video
-  function updateVideo() {
-    ytVideo.src = `https://www.youtube.com/embed/${settings.youtubeVideoId}?autoplay=1&mute=1&loop=1&playlist=${settings.youtubeVideoId}&controls=0&showinfo=0&modestbranding=1&iv_load_policy=3&rel=0`;
-  }
-
-  // Update clock position
-  function updatePosition() {
-    const style = clockContainer.style;
-    style.top = "";
-    style.bottom = "";
-    style.left = "";
-    style.right = "";
-    style.transform = "";
-    style.textAlign = "center";
-
-    switch(settings.clockPosition) {
-      case "top-center":
-        style.top = "20px";
-        style.left = "50%";
-        style.transform = "translateX(-50%)";
-        style.textAlign = "center";
-        break;
-      case "top-left":
-        style.top = "20px";
-        style.left = "20px";
-        style.transform = "";
-        style.textAlign = "left";
-        break;
-      case "top-right":
-        style.top = "20px";
-        style.right = "20px";
-        style.transform = "";
-        style.textAlign = "right";
-        break;
-      case "bottom-center":
-        style.bottom = "20px";
-        style.left = "50%";
-        style.transform = "translateX(-50%)";
-        style.textAlign = "center";
-        break;
-      case "bottom-left":
-        style.bottom = "20px";
-        style.left = "20px";
-        style.transform = "";
-        style.textAlign = "left";
-        break;
-      case "bottom-right":
-        style.bottom = "20px";
-        style.right = "20px";
-        style.transform = "";
-        style.textAlign = "right";
-        break;
-      case "center":
-        style.top = "50%";
-        style.left = "50%";
-        style.transform = "translate(-50%, -50%)";
-        style.textAlign = "center";
-        break;
-    }
-  }
-
-  // Update styles for clock and date
-  function updateStyles() {
-    clock.style.fontSize = settings.fontSizeClock + "px";
-    date.style.fontSize = settings.fontSizeDate + "px";
-    clock.style.color = settings.textColor;
-    date.style.color = settings.textColor;
-
-    // Soft glow text-shadow
-    const glow = `0 0 5px ${settings.textColor}, 0 0 10px ${settings.textColor}`;
-    clock.style.textShadow = glow;
-    date.style.textShadow = `0 0 4px ${settings.textColor}, 0 0 8px ${settings.textColor}`;
-  }
-
-  // Update clock time and date every second
-  function updateClock() {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
-    clock.textContent = `${hours}:${minutes}`;
-    date.textContent = `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]}`;
-  }
-
-  // Initialize UI inputs with current settings
-  function initUI() {
-    document.getElementById("videoId").value = settings.youtubeVideoId;
-    document.getElementById("fontSizeClock").value = settings.fontSizeClock;
-    document.getElementById("fontSizeDate").value = settings.fontSizeDate;
-    document.getElementById("textColor").value = settings.textColor;
-    document.getElementById("positionSelect").value = settings.clockPosition;
-  }
-
-  // Listen to UI changes and update settings live
-  function setupUIListeners() {
-    document.getElementById("videoId").addEventListener("input", e => {
-      settings.youtubeVideoId = e.target.value.trim() || "gU4vSEZwiyE";
-      updateVideo();
-    });
-    document.getElementById("fontSizeClock").addEventListener("input", e => {
-      let val = parseInt(e.target.value);
-      if (val > 10 && val < 500) {
-        settings.fontSizeClock = val;
-        updateStyles();
-      }
-    });
-    document.getElementById("fontSizeDate").addEventListener("input", e => {
-      let val = parseInt(e.target.value);
-      if (val > 10 && val < 500) {
-        settings.fontSizeDate = val;
-        updateStyles();
-      }
-    });
-    document.getElementById("textColor").addEventListener("input", e => {
-      settings.textColor = e.target.value;
-      updateStyles();
-    });
-    document.getElementById("positionSelect").addEventListener("change", e => {
-      settings.clockPosition = e.target.value;
-      updatePosition();
-    });
-  }
-
-  // Initialize everything
-  function init() {
-    updateVideo();
-    updatePosition();
-    updateStyles();
-    updateClock();
-    setInterval(updateClock, 1000);
-    initUI();
-    setupUIListeners();
-  }
-
-  init();
-</script>
-
+        // Apply settings to the clock
+        function applyClockSettings() {
+            const clockContainer = document.getElementById('clock-container');
+            const timeElement = document.getElementById('time');
+            const dateElement = document.getElementById('date');
+            
+            // Apply font family
+            document.body.style.fontFamily = settings.fontFamily;
+            
+            // Apply time styling
+            timeElement.style.fontSize = settings.timeFontSize;
+            timeElement.style.color = settings.timeColor;
+            timeElement.style.textShadow = `0 0 ${settings.glowBlur} ${settings.glowColor}`;
+            
+            // Apply date styling
+            dateElement.style.fontSize = settings.dateFontSize;
+            dateElement.style.color = settings.dateColor;
+            dateElement.style.textShadow = `0 0 ${settings.glowBlur} ${settings.glowColor}`;
+            
+            // Apply position
+            switch(settings.clockPosition) {
+                case 'top-left':
+                    clockContainer.style.top = '20px';
+                    clockContainer.style.left = '20px';
+                    clockContainer.style.transform = 'none';
+                    break;
+                case 'top-right':
+                    clockContainer.style.top = '20px';
+                    clockContainer.style.right = '20px';
+                    clockContainer.style.transform = 'none';
+                    break;
+                case 'bottom-left':
+                    clockContainer.style.bottom = '20px';
+                    clockContainer.style.left = '20px';
+                    clockContainer.style.transform = 'none';
+                    break;
+                case 'bottom-right':
+                    clockContainer.style.bottom = '20px';
+                    clockContainer.style.right = '20px';
+                    clockContainer.style.transform = 'none';
+                    break;
+                case 'center':
+                default:
+                    clockContainer.style.top = '50%';
+                    clockContainer.style.left = '50%';
+                    clockContainer.style.transform = 'translate(-50%, -50%)';
+                    break;
+            }
+        }
+        
+        // Load YouTube video
+        function loadYouTubeVideo() {
+            const video = document.getElementById('video-background');
+            video.src = `https://www.youtube.com/embed/${settings.youtubeVideoId}?autoplay=1&controls=0&loop=1&mute=1&playlist=${settings.youtubeVideoId}&modestbranding=1&rel=0`;
+            
+            // Fallback in case video fails to load
+            video.onerror = () => {
+                document.body.style.backgroundColor = settings.fallbackBackground;
+                document.getElementById('video-container').style.display = 'none';
+            };
+        }
+        
+        // Update time and date
+        function updateClock() {
+            const now = new Date();
+            const timeElement = document.getElementById('time');
+            const dateElement = document.getElementById('date');
+            
+            // Format time
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Format date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateElement.textContent = now.toLocaleDateString('en-US', options);
+        }
+        
+        // Initialize the wallpaper
+        function initWallpaper() {
+            applyClockSettings();
+            loadYouTubeVideo();
+            updateClock();
+            
+            // Update the clock every second
+            setInterval(updateClock, 1000);
+        }
+        
+        // Start when the page loads
+        window.addEventListener('DOMContentLoaded', initWallpaper);
+    </script>
 </body>
 </html>
